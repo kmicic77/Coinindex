@@ -14,7 +14,8 @@ def display_top():
 	url="https://api.coinmarketcap.com/v1/ticker/"
 	response = urllib.request.urlopen(url).read()
 	data = json.loads(response.decode('utf-8'))
-	print (data)
+	for i in range(30):
+		print ("{:>5}. {:>23}  {:>12} USD  Market Cap: {:>15,} USD".format(data[i]['rank'],data[i]['name'],data[i]['price_usd'],data[i]['market_cap_usd']))
 	input("Press ENTER to continue")
 	pass
 def choose_portfolio():
