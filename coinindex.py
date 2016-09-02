@@ -27,6 +27,17 @@ def choose_portfolio(data):
 	print ("Your portfolio:\n")
 	for item in new_list:
 		print ("{:>5}. {:>23}  {:>12} USD  Market Cap: {:>15,} USD".format(item['rank'],item['name'],item['price_usd'],item['market_cap_usd']))
+	money=float(input("How much money would you like to invest (in USD) ? "))
+	total_market_cap=0
+	for item in new_list:
+		total_market_cap+=item['market_cap_usd']
+	print (total_market_cap)
+	for item in new_list:
+		item['proportion']=item['market_cap_usd']/total_market_cap
+		item['worth_in_usd']=item['proportion']*money
+		item['units']=item['worth_in_usd']/item['price_usd']
+		print (item['name'],item['proportion'],item['worth_in_usd'],item['units'])
+	print ("To have your investment proportional to crypto market cap your portfolio should look like this: ")
 	
 	input("Press ENTER to continue")
 	pass
