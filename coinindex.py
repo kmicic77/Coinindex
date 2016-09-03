@@ -12,7 +12,8 @@ def display_menu():
 	print("   3. Exit")
 def display_top(data):
 	for i in range(30):
-		print ("{:>5}. {:>23}  {:>12} USD  Market Cap: {:>15,} USD".format(data[i]['rank'],data[i]['name'],data[i]['price_usd'],data[i]['market_cap_usd']))
+		print ("{:>5}. {:>23}  {:>12} USD  Market Cap: {:>15,} USD".format(data[i]['rank'],data[i]['name'],
+		data[i]['price_usd'],data[i]['market_cap_usd']))
 	input("Press ENTER to continue")
 	
 def choose_portfolio(data):
@@ -26,19 +27,23 @@ def choose_portfolio(data):
 		new_list.append(data[item-1])
 	print ("Your portfolio:\n")
 	for item in new_list:
-		print ("{:>5}. {:>23}  {:>12} USD  Market Cap: {:>15,} USD".format(item['rank'],item['name'],item['price_usd'],item['market_cap_usd']))
+		print ("{:>5}. {:>23}  {:>12} USD  Market Cap: {:>15,} USD".format(item['rank'],
+		item['name'],item['price_usd'],item['market_cap_usd']))
 	money=float(input("How much money would you like to invest (in USD) ? "))
 	total_market_cap=0
 	for item in new_list:
 		total_market_cap+=item['market_cap_usd']
-	print (total_market_cap)
+	
 	for item in new_list:
 		item['proportion']=item['market_cap_usd']/total_market_cap
 		item['worth_in_usd']=item['proportion']*money
 		item['units']=item['worth_in_usd']/item['price_usd']
-		print (item['name'],item['proportion'],item['worth_in_usd'],item['units'])
+		item['in_btc']=item['worth_in_usd']/data[0]['price_usd'] #bitcoin price in USD
+		
 	print ("To have your investment proportional to crypto market cap your portfolio should look like this: ")
-	
+	for item in new_list:
+		print ("{:>5}. {:>23}  {:>10.3f} units {:>12.2f} USD invested  {:>10.4f} BTC invested".format(item['rank'],
+		item['name'],item['units'],item['worth_in_usd'],item['in_btc']))
 	input("Press ENTER to continue")
 	pass
 def load_json():
