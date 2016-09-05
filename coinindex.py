@@ -5,7 +5,7 @@
 
 import os, json, urllib.request
 from openpyxl import Workbook
-from openpyxl.utils import coordinate_from_string
+
 
 
 def display_menu():
@@ -88,7 +88,7 @@ def create_xls(data):
 	ws['E4']="Percentage"
 	ws['F4']="How much to invest"
 	ws['G4']="Unit price (USD)"
-	ws['H4']="Target"
+	ws['H4']="Units"
 	ws['I4']="How much I have now"
 	ws['J4']="How much to buy"
 	ws['K4']="Balance"
@@ -120,19 +120,28 @@ def create_xls(data):
 
 		ws.cell(row=(i+5),column=3,value=data[i]['name'])
 		ws.cell(row=(i+5),column=4,value=float(data[i]['market_cap_usd']))
+		ws.cell(row=(i+5),column=4).number_format='#,##0'
 		ws.cell(row=(i+5),column=5,value=data[i]['proportion'])
+		ws.cell(row=(i+5),column=5).number_format='0.00%'
 		ws.cell(row=(i+5),column=6,value=data[i]['worth_in_usd'])
+		ws.cell(row=(i+5),column=6).number_format='0.00'
 		ws.cell(row=(i+5),column=7,value=float(data[i]['price_usd']))
+		ws.cell(row=(i+5),column=7).number_format='0.00'
 		ws.cell(row=(i+5),column=8,value=data[i]['units'])
+		ws.cell(row=(i+5),column=8).number_format='0.000'
 		ws.cell(row=(i+5),column=9,value=0)
+		ws.cell(row=(i+5),column=9).number_format='0.000'
 		ws.cell(row=(i+5),column=10,value=formula_1)
+		ws.cell(row=(i+5),column=10).number_format='0.000'
 		ws.cell(row=(i+5),column=11,value=formula_2)
+		ws.cell(row=(i+5),column=11).number_format='0.00%'
 
 	#formula_3 calculates total market cap
 
 	formula_3='=SUM(D5:D'+str(len(data)+4)
 	ws.cell(row=len(data)+7,column=3,value='Total:')
 	ws.cell(row=len(data)+7,column=4,value=formula_3)
+	ws.cell(row=len(data)+7,column=4).number_format='#,##0'
 
 	file_name=input('Save portfolio as...(program will use Excel extension .xlsx) : ')
 	file_name+=".xlsx"
