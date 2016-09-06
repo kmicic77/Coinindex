@@ -4,14 +4,16 @@
 """ which is similar to Index investing """
 
 import os, json, urllib.request
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
+
 
 
 
 def display_menu():
 	print("\n\n\n   1. Display top cryptocurrencies")
 	print("   2. Choose your portfolio")
-	print("   3. Exit")
+	print("   3. Update your spreadsheet")
+	print("   4. Exit")
 def display_top(data):
 	for i in range(30):
 		
@@ -119,30 +121,22 @@ def create_xls(data):
 
 
 		ws.cell(row=(i+5),column=3,value=data[i]['name'])
-		ws.cell(row=(i+5),column=4,value=float(data[i]['market_cap_usd']))
-		ws.cell(row=(i+5),column=4).number_format='#,##0'
-		ws.cell(row=(i+5),column=5,value=data[i]['proportion'])
-		ws.cell(row=(i+5),column=5).number_format='0.00%'
-		ws.cell(row=(i+5),column=6,value=data[i]['worth_in_usd'])
-		ws.cell(row=(i+5),column=6).number_format='0.00'
-		ws.cell(row=(i+5),column=7,value=float(data[i]['price_usd']))
-		ws.cell(row=(i+5),column=7).number_format='0.00'
-		ws.cell(row=(i+5),column=8,value=data[i]['units'])
-		ws.cell(row=(i+5),column=8).number_format='0.000'
-		ws.cell(row=(i+5),column=9,value=0)
-		ws.cell(row=(i+5),column=9).number_format='0.000'
-		ws.cell(row=(i+5),column=10,value=formula_1)
-		ws.cell(row=(i+5),column=10).number_format='0.000'
-		ws.cell(row=(i+5),column=11,value=formula_2)
-		ws.cell(row=(i+5),column=11).number_format='0.00%'
+		ws.cell(row=(i+5),column=4,value=float(data[i]['market_cap_usd'])).number_format='#,##0'
+		ws.cell(row=(i+5),column=5,value=data[i]['proportion']).number_format='0.00%'
+		ws.cell(row=(i+5),column=6,value=data[i]['worth_in_usd']).number_format='0.00'
+		ws.cell(row=(i+5),column=7,value=float(data[i]['price_usd'])).number_format='0.00'
+		ws.cell(row=(i+5),column=8,value=data[i]['units']).number_format='0.000'
+		ws.cell(row=(i+5),column=9,value=0).number_format='0.000'
+		ws.cell(row=(i+5),column=10,value=formula_1).number_format='0.000'
+		ws.cell(row=(i+5),column=11,value=formula_2).number_format='0.00%'
+		
 
 	#formula_3 calculates total market cap
 
 	formula_3='=SUM(D5:D'+str(len(data)+4)
 	ws.cell(row=len(data)+7,column=3,value='Total:')
-	ws.cell(row=len(data)+7,column=4,value=formula_3)
-	ws.cell(row=len(data)+7,column=4).number_format='#,##0'
-
+	ws.cell(row=len(data)+7,column=4,value=formula_3).number_format='#,##0'
+	
 	file_name=input('Save portfolio as...(program will use Excel extension .xlsx) : ')
 	file_name+=".xlsx"
 	wb.save(file_name)
@@ -156,6 +150,21 @@ def load_json():
 	data = json.loads(response.decode('utf-8'))
 	return data
 
+def update_spreadsheet(data):
+	file_name=input("Name of the file to be updated?")
+	wb=load_workbook(file_name)
+	ws=wb.active
+	row_count=ws.max_row
+
+	# Knowing row_count we can calculate how many cryptocurrencies are included in the spreadsheet
+	# There are 7 rows not used for storing cryptocurrency data
+
+	crypto_count=row_count-7
+	
+
+	input("Press ENTER")
+	
+
 os.system('cls')	
 print ("\n\n  Reading data from coinmarketcap.com...")
 data=load_json()	
@@ -164,11 +173,12 @@ while True:
 	display_menu()
 	
 	option=input("\nChoose option: ")
-	if option=='3': break
-	if option=='1':
+	if option=='4': break
+	elif option=='1':
 		display_top(data)
 		input("Press ENTER to continue")
-	if option=='2': choose_portfolio(data)
+	elif option=='2': choose_portfolio(data)
+	elif option=='3': update_spreadsheet(data)
 print("\nThank you for using my program! To the moon! ;)\n")
 
 
