@@ -150,6 +150,12 @@ def load_json():
 	data = json.loads(response.decode('utf-8'))
 	return data
 
+def find_rank(data,name):
+	for item in data:
+		for key in item:
+			if item[key]==name:
+				return int(item['rank'])
+	raise ("Wrong cryptocurrency name in the spreadsheet: {}".format(name))
 def update_spreadsheet(data):
 	file_name=input("Name of the file to be updated?")
 	wb=load_workbook(file_name)
@@ -160,7 +166,18 @@ def update_spreadsheet(data):
 	# There are 7 rows not used for storing cryptocurrency data
 
 	crypto_count=row_count-7
+	#new_list is a sorted list of ranks of cryptocurrencies
+	new_list=[]
+	for i in range(crypto_count):
+		coin_name=ws.cell(row=i+5,column=3).value
+		new_list.append(find_rank(data,coin_name))
+		new_list=sorted(new_list)
 	
+	new_data=[]
+	for i in new_list:
+		new_data.append(data[i-1])
+	print (new_data)
+
 
 	input("Press ENTER")
 	
