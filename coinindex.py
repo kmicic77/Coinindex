@@ -82,6 +82,10 @@ def save_to_text_file(data):
 	input("Press ENTER to continue")
 
 	pass
+#cell_symbol returns cell adress as string based on row and column - row=1, column=2 = "B1"
+def cell_symbol(row,column):
+	return "{}{}".format(chr(64+column),row)
+
 def create_xls(data):
 	wb=Workbook()
 	ws=wb.active
@@ -108,24 +112,23 @@ def create_xls(data):
 	# filling worsheet with names and values
 	#formula_1 calculates how much to buy (target minus how much I have now)
 	#formula_2 calculates balance - how many percent actual holdings differ from target
-	
+	#formula_3 calculates proportion
+	#formula_4 calculates how many units to have
+
 	for i in range(len(data)):
-		y=str(ws.cell(row=i+5,column=8).column)
-		x=str(ws.cell(row=i+5,column=8).row)
-		h5=y+x
-		y1=str(ws.cell(row=i+5,column=9).column)
-		x1=str(ws.cell(row=i+5,column=9).row)
-		i5=y1+x1
-		formula_1='='+h5+'-'+i5
-		formula_2='='+h5+"/"+i5+"-1"
+
+		formula_1="="+cell_symbol(i+5,8)+"-"+cell_symbol(i+5,9)
+		formula_2="="+cell_symbol(i+5,8)+"/"+cell_symbol(i+5,9)+"-1"
+		formula_3="="+cell_symbol(i+5,4)+"/D"+str(len(data)+7)
+		formula_4="="+cell_symbol(i+5,6)+"/"+cell_symbol(i+5,7)
 
 
 		ws.cell(row=(i+5),column=3,value=data[i]['name'])
 		ws.cell(row=(i+5),column=4,value=float(data[i]['market_cap_usd'])).number_format='#,##0'
-		ws.cell(row=(i+5),column=5,value=data[i]['proportion']).number_format='0.00%'
+		ws.cell(row=(i+5),column=5,value=formula_3).number_format='0.00%'
 		ws.cell(row=(i+5),column=6,value=data[i]['worth_in_usd']).number_format='0.00'
 		ws.cell(row=(i+5),column=7,value=float(data[i]['price_usd'])).number_format='0.00'
-		ws.cell(row=(i+5),column=8,value=data[i]['units']).number_format='0.000'
+		ws.cell(row=(i+5),column=8,value=formula_4).number_format='0.000'
 		ws.cell(row=(i+5),column=9,value=0).number_format='0.000'
 		ws.cell(row=(i+5),column=10,value=formula_1).number_format='0.000'
 		ws.cell(row=(i+5),column=11,value=formula_2).number_format='0.00%'
@@ -133,9 +136,9 @@ def create_xls(data):
 
 	#formula_3 calculates total market cap
 
-	formula_3='=SUM(D5:D'+str(len(data)+4)
+	formula_9='=SUM(D5:D'+str(len(data)+4)
 	ws.cell(row=len(data)+7,column=3,value='Total:')
-	ws.cell(row=len(data)+7,column=4,value=formula_3).number_format='#,##0'
+	ws.cell(row=len(data)+7,column=4,value=formula_9).number_format='#,##0'
 	
 	file_name=input('Save portfolio as...(program will use Excel extension .xlsx) : ')
 	file_name+=".xlsx"
