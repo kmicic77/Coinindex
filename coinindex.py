@@ -67,7 +67,7 @@ def choose_portfolio(data):
 			save_to_text_file(new_list)
 			break
 		if option=='2' : 
-			create_xls(new_list)
+			create_xls(new_list,money)
 			break
 		if option=='3' : continue
 		if option=='4' : break
@@ -86,7 +86,14 @@ def save_to_text_file(data):
 def cell_symbol(row,column):
 	return "{}{}".format(chr(64+column),row)
 
-def create_xls(data):
+def current_value_formula(elements):
+	lst=[]
+	for i in range(elements):
+		lst.append(cell_symbol(i+5,7)+"*"+cell_symbol(i+5,9))
+	return ("="+"+".join(lst))
+
+
+def create_xls(data,money):
 	wb=Workbook()
 	ws=wb.active
 
@@ -114,6 +121,7 @@ def create_xls(data):
 	#formula_2 calculates balance - how many percent actual holdings differ from target
 	#formula_3 calculates proportion
 	#formula_4 calculates how many units to have
+	#formula_5 calculates how much to invest in USD
 
 	for i in range(len(data)):
 
@@ -121,12 +129,13 @@ def create_xls(data):
 		formula_2="="+cell_symbol(i+5,8)+"/"+cell_symbol(i+5,9)+"-1"
 		formula_3="="+cell_symbol(i+5,4)+"/D"+str(len(data)+7)
 		formula_4="="+cell_symbol(i+5,6)+"/"+cell_symbol(i+5,7)
+		formula_5="="+cell_symbol(i+5,5)+"*D"+str(len(data)+9)
 
 
 		ws.cell(row=(i+5),column=3,value=data[i]['name'])
 		ws.cell(row=(i+5),column=4,value=float(data[i]['market_cap_usd'])).number_format='#,##0'
 		ws.cell(row=(i+5),column=5,value=formula_3).number_format='0.00%'
-		ws.cell(row=(i+5),column=6,value=data[i]['worth_in_usd']).number_format='0.00'
+		ws.cell(row=(i+5),column=6,value=formula_5).number_format='0.00'
 		ws.cell(row=(i+5),column=7,value=float(data[i]['price_usd'])).number_format='0.00'
 		ws.cell(row=(i+5),column=8,value=formula_4).number_format='0.000'
 		ws.cell(row=(i+5),column=9,value=0).number_format='0.000'
@@ -134,11 +143,20 @@ def create_xls(data):
 		ws.cell(row=(i+5),column=11,value=formula_2).number_format='0.00%'
 		
 
-	#formula_3 calculates total market cap
+	#formula_9 calculates total market cap
 
 	formula_9='=SUM(D5:D'+str(len(data)+4)
 	ws.cell(row=len(data)+7,column=3,value='Total:')
 	ws.cell(row=len(data)+7,column=4,value=formula_9).number_format='#,##0'
+	ws.cell(row=len(data)+9,column=3,value='Money:')
+	ws.cell(row=len(data)+9,column=4,value=money).number_format='0.00'
+	
+	# formula_6 calculates current value
+
+	formula_6=current_value_formula(len(data))
+	ws.cell(row=len(data)+11,column=3,value='Current value:')
+	ws.cell(row=len(data)+11,column=4,value=formula_6).number_format='0.00'
+
 	
 	file_name=input('Save portfolio as...(program will use Excel extension .xlsx) : ')
 	file_name+=".xlsx"
