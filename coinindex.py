@@ -184,10 +184,12 @@ def update_spreadsheet(data):
 	row_count=ws.max_row
 
 	# Knowing row_count we can calculate how many cryptocurrencies are included in the spreadsheet
-	# There are 7 rows not used for storing cryptocurrency data
+	# There are 11 rows not used for storing cryptocurrency data
 
-	crypto_count=row_count-7
+	crypto_count=row_count-11
+	
 	#new_list is a sorted list of ranks of cryptocurrencies
+
 	new_list=[]
 	for i in range(crypto_count):
 		coin_name=ws.cell(row=i+5,column=3).value
@@ -198,7 +200,13 @@ def update_spreadsheet(data):
 	for i in new_list:
 		new_data.append(data[i-1])
 	print (new_data)
+	for i in range(crypto_count):
+		ws.cell(row=(i+5),column=4,value=float(data[i]['market_cap_usd']))
+		ws.cell(row=(i+5),column=7,value=float(data[i]['price_usd']))
 
+	print("Your spreadhseet has been updated with current market cap and prices")
+	wb.save(file_name)
+	print("File {} saved!".format(file_name))	
 
 	input("Press ENTER")
 	
