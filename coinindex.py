@@ -21,56 +21,73 @@ def display_top(data):
 
 	
 def choose_portfolio(data):
+	
+	new_list=[]
+	display_top(data)
+	error=False
 	while True:
-		new_list=[]
-		display_top(data)
-		
 		choice=input("\n  Choose your coins, by typing numbers separated by commas, for example: 1,4,7,12  : ")
 		choice_list=choice.split(',')
-		choice_list=sorted([int(i) for i in choice_list])
+		for i in choice_list:
+			try:
+				check=data[int(i)-1]      #checking if input is correct
+			except:
+				error=True
+		if error:
+			error=False
+			print("\nInput error! Try again")
+		else:
+			break
 		
-		for item in choice_list:
-			new_list.append(data[item-1])
-		
-		print ("\nYour portfolio:\n")
-		
-		for item in new_list:
-			print ("{:>5}. {:>23}  {:>12} USD  Market Cap: {:>15,} USD".format(item['rank'],
-			item['name'],item['price_usd'],float(item['market_cap_usd'])))
+	choice_list=set(choice_list) #removing duplicates
+	choice_list=list(choice_list)
+	choice_list=sorted([int(i) for i in choice_list])
 
-		money=float(input("\nHow much money would you like to invest (in USD) ? "))
-		total_market_cap=0
+	
+	for item in choice_list:
+		new_list.append(data[item-1])
+	
+	print ("\nYour portfolio:\n")
+	
+	for item in new_list:
+		print ("{:>5}. {:>23}  {:>12} USD  Market Cap: {:>15,} USD".format(item['rank'],
+		item['name'],item['price_usd'],float(item['market_cap_usd'])))
 
-		for item in new_list:
-			total_market_cap+=float(item['market_cap_usd'])
-		
-		for item in new_list:
-			item['proportion']=float(item['market_cap_usd'])/total_market_cap
-			item['worth_in_usd']=item['proportion']*money
-			item['units']=item['worth_in_usd']/float(item['price_usd'])
-			item['in_btc']=item['worth_in_usd']/float(data[0]['price_usd']) #bitcoin price in USD
-			
-		print ("\nTo have your investment proportional to crypto market cap your portfolio should look like this: \n")
-		
-		for item in new_list:
-			print ("{:>5}. {:>23}  {:>10.3f} units {:>12.2f} in USD {:>10.4f} in BTC".format(item['rank'],
-			item['name'],item['units'],item['worth_in_usd'],item['in_btc']))
+	money=float(input("\nHow much money would you like to invest (in USD) ? "))
+	total_market_cap=0
 
-		print("\n  1. Save portfolio to text file")
-		print("  2. Create .xls file")
-		print("  3. Choose different coins")
-		print("  4. Exit")
+	for item in new_list:
+		total_market_cap+=float(item['market_cap_usd'])
+	
+	for item in new_list:
+		item['proportion']=float(item['market_cap_usd'])/total_market_cap
+		item['worth_in_usd']=item['proportion']*money
+		item['units']=item['worth_in_usd']/float(item['price_usd'])
+		item['in_btc']=item['worth_in_usd']/float(data[0]['price_usd']) #bitcoin price in USD
 		
+	print ("\nTo have your investment proportional to crypto market cap your portfolio should look like this: \n")
+	
+	for item in new_list:
+		print ("{:>5}. {:>23}  {:>10.3f} units {:>12.2f} in USD {:>10.4f} in BTC".format(item['rank'],
+		item['name'],item['units'],item['worth_in_usd'],item['in_btc']))
+
+	print("\n  1. Save portfolio to text file")
+	print("  2. Create .xls file")
+	print("  3. Exit")
+	
+	while True:
 		option=input("\nChoose option: ")
-		
+	
 		if option=='1' : 
 			save_to_text_file(new_list)
 			break
-		if option=='2' : 
+		elif option=='2' : 
 			create_xls(new_list,money)
 			break
-		if option=='3' : continue
-		if option=='4' : break
+		elif option=='3' : break
+		else:
+			print ("Invalid option!")
+			
 	
 def save_to_text_file(data):
 	file_name=input('Save portfolio as...: ')
@@ -81,7 +98,7 @@ def save_to_text_file(data):
 	print ("File {} succesfully saved\n".format(file_name))
 	input("Press ENTER to continue")
 
-	pass
+	
 #cell_symbol returns cell adress as string based on row and column - row=1, column=2 = "B1"
 def cell_symbol(row,column):
 	return "{}{}".format(chr(64+column),row)
@@ -158,9 +175,16 @@ def create_xls(data,money):
 	ws.cell(row=len(data)+11,column=4,value=formula_6).number_format='0.00'
 
 	
-	file_name=input('Save portfolio as...(program will use Excel extension .xlsx) : ')
-	file_name+=".xlsx"
-	wb.save(file_name)
+	while True:
+		file_name=input('Save portfolio as...(program will add Excel extension .xlsx) : ')
+		file_name+=".xlsx"
+		try:
+			wb.save(file_name)
+		except:
+			print("File name error!")
+		else:
+			break
+	
 	print ("File {} succesfully saved\n".format(file_name))
 	input("Press ENTER to continue")
 	
@@ -178,8 +202,14 @@ def find_rank(data,name):
 				return int(item['rank'])
 	raise ("Wrong cryptocurrency name in the spreadsheet: {}".format(name))
 def update_spreadsheet(data):
-	file_name=input("Name of the file to be updated?")
-	wb=load_workbook(file_name)
+	while True:
+		file_name=input("Name of the file to be updated? ")
+		try:
+			wb=load_workbook(file_name)
+		except:
+			print("Error! Check name or the type of the file and try again")
+		else:
+			break
 	ws=wb.active
 	row_count=ws.max_row
 
@@ -199,7 +229,7 @@ def update_spreadsheet(data):
 	new_data=[]
 	for i in new_list:
 		new_data.append(data[i-1])
-	print (new_data)
+	
 	for i in range(crypto_count):
 		ws.cell(row=(i+5),column=4,value=float(data[i]['market_cap_usd']))
 		ws.cell(row=(i+5),column=7,value=float(data[i]['price_usd']))
@@ -210,6 +240,7 @@ def update_spreadsheet(data):
 
 	input("Press ENTER")
 	
+# starting main program
 
 os.system('cls')	
 print ("\n\n  Reading data from coinmarketcap.com...")
@@ -225,6 +256,10 @@ while True:
 		input("Press ENTER to continue")
 	elif option=='2': choose_portfolio(data)
 	elif option=='3': update_spreadsheet(data)
+	else:
+		print ("No such option!")
+		input ("Press ENTER to continue")
+
 print("\nThank you for using my program! To the moon! ;)\n")
 
 
