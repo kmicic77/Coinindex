@@ -14,16 +14,16 @@ def display_menu():
 	print("   2. Choose your portfolio")
 	print("   3. Update your spreadsheet")
 	print("   4. Exit")
-def display_top(data):
+def display_top():
 	for i in range(30):
 		
 		print ("{:>5}. {:>23}  {:>12} USD  Market Cap: {:>15,} USD".format(data[i]['rank'],data[i]['name'],data[i]['price_usd'],float(data[i]['market_cap_usd'])))
 
 	
-def choose_portfolio(data):
+def choose_portfolio():
 	
 	new_list=[]
-	display_top(data)
+	display_top()
 	error=False
 	while True:
 		choice=input("\n  Choose your coins, by typing numbers separated by commas, for example: 1,4,7,12  : ")
@@ -195,13 +195,13 @@ def load_json():
 	data = json.loads(response.decode('utf-8'))
 	return data
 
-def find_rank(data,name):
+def find_rank(name):
 	for item in data:
 		for key in item:
 			if item[key]==name:
 				return int(item['rank'])
 	raise ("Wrong cryptocurrency name in the spreadsheet: {}".format(name))
-def update_spreadsheet(data):
+def update_spreadsheet():
 	while True:
 		file_name=input("Name of the file to be updated? ")
 		try:
@@ -223,7 +223,7 @@ def update_spreadsheet(data):
 	new_list=[]
 	for i in range(crypto_count):
 		coin_name=ws.cell(row=i+5,column=3).value
-		new_list.append(find_rank(data,coin_name))
+		new_list.append(find_rank(coin_name))
 		new_list=sorted(new_list)
 	
 	new_data=[]
@@ -231,8 +231,8 @@ def update_spreadsheet(data):
 		new_data.append(data[i-1])
 	
 	for i in range(crypto_count):
-		ws.cell(row=(i+5),column=4,value=float(data[i]['market_cap_usd']))
-		ws.cell(row=(i+5),column=7,value=float(data[i]['price_usd']))
+		ws.cell(row=(i+5),column=4,value=float(new_data[i]['market_cap_usd']))
+		ws.cell(row=(i+5),column=7,value=float(new_data[i]['price_usd']))
 
 	print("Your spreadhseet has been updated with current market cap and prices")
 	wb.save(file_name)
@@ -252,10 +252,10 @@ while True:
 	option=input("\nChoose option: ")
 	if option=='4': break
 	elif option=='1':
-		display_top(data)
+		display_top()
 		input("Press ENTER to continue")
-	elif option=='2': choose_portfolio(data)
-	elif option=='3': update_spreadsheet(data)
+	elif option=='2': choose_portfolio()
+	elif option=='3': update_spreadsheet()
 	else:
 		print ("No such option!")
 		input ("Press ENTER to continue")
