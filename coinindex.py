@@ -93,7 +93,7 @@ def save_to_text_file(data):
 	file_name=input('Save portfolio as...: ')
 	with open(file_name,'w') as f:
 		for item in data:
-			f.write("{}. {},  {:.3f} units, {:.2f} in USD, {:.4f} in BTC\n".format(item['rank'],
+			f.write("{:>4s}. {:>20s}  {:>15.3f} units {:>15.2f} in USD {:>15.4f} in BTC\n".format(item['rank'],
 			item['name'],item['units'],item['worth_in_usd'],item['in_btc']))
 	print ("File {} succesfully saved\n".format(file_name))
 	input("Press ENTER to continue")
