@@ -23,11 +23,36 @@ def display_top():
 def choose_portfolio():
 	
 	new_list=[]
+	n_list=[]
+	list_=[]
+	rng=[]
 	display_top()
 	error=False
 	while True:
-		choice=input("\n  Choose your coins, by typing numbers separated by commas, for example: 1,4,7,12  : ")
+		choice=input("\n  Choose your coins, by typing numbers separated by commas and hyphens i.e.: 1,3-5,15 : ")
 		choice_list=choice.split(',')
+
+		#checking if there's range in input and convert it (3-7) --> 3,4,5,6,7
+		for item in choice_list:
+			for i in range(len(item)):
+				if item[i]=='-':
+					rng=item.split('-')
+					list_.extend([x for x in range(int(rng[0]),int(rng[1])+1)])
+					
+		#n_list ignores ranges
+
+		
+		for item in choice_list:
+			if item.isdigit():
+				n_list.append(item)
+
+		# changes applied fo choice_list  1,3-5,7,11-15 ---> 1,3,4,5,7,11,12,13,14,15
+
+		choice_list=[]
+		choice_list.extend(list_)
+		choice_list.extend(n_list)
+
+		
 		for i in choice_list:
 			try:
 				check=data[int(i)-1]      #checking if input is correct
@@ -195,12 +220,12 @@ def load_json():
 	data = json.loads(response.decode('utf-8'))
 	return data
 
-def find_rank(name):
+def find_rank(name): 
 	for item in data:
-		for key in item:
-			if item[key]==name:
-				return int(item['rank'])
+		if item['name']==name:
+			return int(item['rank'])
 	raise ("Wrong cryptocurrency name in the spreadsheet: {}".format(name))
+
 def update_spreadsheet():
 	while True:
 		file_name=input("Name of the file to be updated? ")
