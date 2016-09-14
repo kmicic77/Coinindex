@@ -15,10 +15,24 @@ def display_menu():
 	print("   3. Update your spreadsheet")
 	print("   4. Exit")
 def display_top():
-	for i in range(30):
-		
-		print ("{:>5}. {:>23}  {:>12} USD  Market Cap: {:>15,} USD".format(data[i]['rank'],data[i]['name'],data[i]['price_usd'],float(data[i]['market_cap_usd'])))
+	while True:
+		x=input("Display 30 cryptocurrencies beginning with rank... : ")
+		try:
+			int(x)
+		except:
+			print("Wrong input! Try again")
+			continue
+		if int(x)<len(data)-30 and x.isdigit() and int(x)>0:
+			break
+		else:
+			print("Wrong input! Try again")
 
+	for i in range(int(x)-1,int(x)+29):
+		try:
+			print ("{:>5}. {:>23}  {:>12} USD  Market Cap: {:>15,} USD".format(data[i]['rank'],data[i]['name'],data[i]['price_usd'],float(data[i]['market_cap_usd'])))
+		except:
+			print ("Can't display those cryptocurrencies. Market cap unknown...")
+			return
 	
 def choose_portfolio():
 	
@@ -26,20 +40,24 @@ def choose_portfolio():
 	n_list=[]
 	list_=[]
 	rng=[]
-	display_top()
 	error=False
+
+	display_top()
+	
+
 	while True:
 		choice=input("\n  Choose your coins, by typing numbers separated by commas and hyphens i.e.: 1,3-5,15 : ")
 		choice_list=choice.split(',')
 
 		#checking if there's range in input and convert it (3-7) --> 3,4,5,6,7
+
 		for item in choice_list:
 			for i in range(len(item)):
 				if item[i]=='-':
 					rng=item.split('-')
 					list_.extend([x for x in range(int(rng[0]),int(rng[1])+1)])
 					
-		#n_list ignores ranges
+		#n_list filters choice_list removing items with hyphens and other non digit 
 
 		
 		for item in choice_list:
@@ -65,7 +83,7 @@ def choose_portfolio():
 			break
 		
 	choice_list=set(choice_list) #removing duplicates
-	choice_list=list(choice_list)
+	choice_list=list(choice_list) #converting back to list so it can be sorted
 	choice_list=sorted([int(i) for i in choice_list])
 
 	
