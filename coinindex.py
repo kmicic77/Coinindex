@@ -10,10 +10,9 @@ from openpyxl import Workbook, load_workbook
 
 
 def display_menu():
-	print("\n\n\n   1. Display top cryptocurrencies")
-	print("   2. Choose your portfolio")
-	print("   3. Update your spreadsheet")
-	print("   4. Exit")
+	print("\n\n\n   1. Choose your portfolio")
+	print("   2. Update your spreadsheet")
+	print("   3. Exit")
 def display_top():
 	while True:
 		x=input("Display 30 cryptocurrencies beginning with rank... : ")
@@ -293,12 +292,9 @@ while True:
 	display_menu()
 	
 	option=input("\nChoose option: ")
-	if option=='4': break
-	elif option=='1':
-		display_top()
-		input("Press ENTER to continue")
-	elif option=='2': choose_portfolio()
-	elif option=='3': update_spreadsheet()
+	if option=='3': break
+	elif option=='1': choose_portfolio()
+	elif option=='2': update_spreadsheet()
 	else:
 		print ("No such option!")
 		input ("Press ENTER to continue")
